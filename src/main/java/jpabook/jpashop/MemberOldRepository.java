@@ -7,7 +7,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 @Repository
-public class MemberRepository {
+public class MemberOldRepository {
     @PersistenceContext // 스프링부트가 EntityManager 를 자동으로 주입
     private EntityManager em;
 

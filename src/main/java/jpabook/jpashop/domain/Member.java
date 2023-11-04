@@ -18,6 +18,6 @@ public class Member {
     @Embedded
     private Address address;
 
-    @OneToMany(mappedBy = "member")
+    @OneToMany(mappedBy = "member") // 1대다 양방향 매핑
     private List<Order> orders  = new ArrayList<>();
 }
