@@ -1,7 +1,10 @@
 package jpabook.jpashop.domain;
 
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.data.util.Lazy;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -11,12 +14,13 @@ import java.util.List;
 @Entity
 @Table(name="orders")
 @Getter @Setter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Order {
     @Id @GeneratedValue
     @Column(name = "order_id") // 테이블 명의 아이디 값을 주로 선언
     private Long id;
 
-    @ManyToOne // 다대일
+    @ManyToOne(fetch = FetchType.LAZY) // 다대일
     @JoinColumn(name = "member_id")
     private Member member; // FK (외래키), 연간관계의 주인, 주문 회원
 
