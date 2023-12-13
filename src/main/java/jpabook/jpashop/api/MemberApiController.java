@@ -19,6 +19,10 @@ import java.util.stream.Collectors;
 public class MemberApiController {
     private final MemberService memberService;
 
+    /*
+    이 방법을 사용하면 모든 엔티티의 정보가 노출됨
+    이러한 경우에 @JsonIgnore 를 사용하여 노출방지
+     */
     @GetMapping("/api/v1/members")
     public List<Member> membersV1() {
         return memberService.findMembers();
