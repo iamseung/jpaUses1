@@ -28,9 +28,13 @@ public class MemberApiController {
         return memberService.findMembers();
     }
 
+    /*
+    Dto 를 통해 노출되는 엔티티의 정보를 지정하여 반환한다
+    바로 반환하면 배열 형식으로 반환하기 때문에 한번 감싸주는 형태
+     */
     @GetMapping("/api/v2/members")
     public Result memberV2() {
-    List<Member> findMembers = memberService.findMembers();
+        List<Member> findMembers = memberService.findMembers();
         List<MemberDto> collect = findMembers.stream()
                 .map(m -> new MemberDto(m.getName()))
                 .collect(Collectors.toList());
