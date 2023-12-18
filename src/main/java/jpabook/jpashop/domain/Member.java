@@ -22,7 +22,7 @@ public class Member {
     @Embedded
     private Address address;
 
-//    @JsonIgnore // Api 에서 반환제외
+    @JsonIgnore // Api 에서 반환제외
     @OneToMany(mappedBy = "member") // 1대다 양방향 매핑
     private List<Order> orders  = new ArrayList<>();
 }

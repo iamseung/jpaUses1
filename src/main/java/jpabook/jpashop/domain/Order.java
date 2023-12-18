@@ -22,12 +22,15 @@ public class Order {
 
     @ManyToOne(fetch = FetchType.LAZY) // 다대일
     @JoinColumn(name = "member_id")
-    private Member member; // FK (외래키), 연간관계의 주인, 주문 회원
+    // FK (외래키), 연간관계의 주인, 주문 회원
+    // new ByteBuddy() 객체가 생성되어 있음
+    private Member member;
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL) // order를 저장하면 orderitem 도 저장되게끔!
     private List<OrderItem> orderItems = new ArrayList<>();
 
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY) @JoinColumn(name = "delivery_id")
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "delivery_id")
     private Delivery delivery; //배송정보
 
     private LocalDateTime orderDate; //주문시간 @Enumerated(EnumType.STRING)
