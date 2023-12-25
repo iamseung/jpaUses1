@@ -80,7 +80,7 @@ public class OrderApiController {
     /*
     [페치 조인과 페이징이 가능한 API 설계]
         ToOne 관계는 페치 조인해도 페이징에 영향을 주지 않는다.
-        따라서 ToOne 관계는 페치조인으로 쿼 리 수를 줄이고 해결하고,
+        따라서 ToOne 관계는 페치 조인으로 쿼리 수를 줄이고 해결하고,
         나머지는 hibernate.default_batch_fetch_size 로 최적화 하자.
      */
     @GetMapping("api/v3.1/orders")
@@ -91,6 +91,7 @@ public class OrderApiController {
         // XtoOne 관계는 페치 조인으로 바로 가져온다
         List<Order> orders = orderRepository.findAllWithMemberDelivery(offset, limit);
 
+        // 컬렉션은 페치 조인 대신에 지연 로딩을 유지하고 @BatchSize 로 최적화
         // 1대다 관계는 default_batch_fetch_size 를 지정해서 IN 으로 일괄로 가져와서 조회!
         List<OrderDto> result = orders.stream()
                 .map(OrderDto::new)
@@ -111,12 +112,25 @@ public class OrderApiController {
         return orderQueryRepository.findOrderQueryDtos();
     }
 
+    /*
+    여러 주문을 한꺼번에 조회하는 경우에는 V4 대신에 이것을 최적화한 V5 방식을 사용해야 한다.
+    예를 들어서 조회한 Order 데이터가 1000건인데, V4 방식을 그대로 사용하면, 쿼리가 총 1 + 1000번 실행된다.
+    여기서 1은 Order 를 조회한 쿼리고, 1000은 조회된 Order의 row 수다.
+
+    V5 방식 으로 최적화 하면 쿼리가 총 1 + 1번만 실행된다.
+    상황에 따라 다르겠지만 운영 환경에서 100배 이상의 성능 차이가 날 수 있다.
+     */
     @GetMapping("api/v5/orders")
     public List<OrderQueryDto> ordersV5() {
         return orderQueryRepository.findAllByDto_optimization();
     }
 
-    // Query 한번에 데이터를 조회한다
+    // Query 한번에 데이터를 조회
+    /*
+    쿼리 한번으로 최적화 되어서 상당히 좋아보이지만, Order를 기준으로 페 이징이 불가능하다.
+    실무에서는 이정도 데이터면 수백이나, 수천건 단위로 페이징 처리가 꼭 필요하므로, 이 경우 선택하기 어려운 방법이다.
+    그리고 데이터가 많으면 중복 전송이 증가해서 V5와 비교해서 성능 차이도 미비하다.
+     */
     @GetMapping("api/v6/orders")
     public List<OrderFlatDto> ordersV6() {
         return orderQueryRepository.findAllByDto_flat();

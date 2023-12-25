@@ -86,6 +86,7 @@ public class OrderQueryRepository {
                 .getResultList();
     }
 
+    // 모두 join 해서 쿼리 한번에 해결, 중복이 발생하고 뻥튀기가 심한 단점, Order를 기준으로 페이징 X
     public List<OrderFlatDto> findAllByDto_flat() {
         return em.createQuery(
                 "select new jpabook.jpashop.repository.order.query.OrderFlatDto(o.id, m.name, o.orderDate, o.status, d.address, i.name, oi.orderPrice, oi.count)" +
